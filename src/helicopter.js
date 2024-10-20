@@ -15,7 +15,7 @@ class Helicopter {
     this.vy = 0;
     this.ay = 0;
     this.ax = 0;
-    this.g = 0.1;
+    this.g = 0.05;
 
     this.img = new Image();
     this.img.src =
@@ -28,19 +28,75 @@ class Helicopter {
 
   draw() {
     // TODO: draw helicopter image
+    this.ctx.drawImage(
+      this.img,
+      0,
+      (this.img.frameIndex / this.img.frames) * this.img.height,
+      this.img.width,
+      (1 / this.img.frames) * this.img.width,
+      this.x,
+      this.y,
+      this.w,
+      this.h
+    )
 
     this.weapon.draw();
   }
 
   isFloor() {
     // TODO: check if floor
+    return this.y + this.h >= this.ctx.canvas.height;
   }
 
   move() {
     // TODO: move
+    this.vy += this.ay + this.g;
+    this.vx += this.ax;
+
+    this.x += this.vx;
+    this.y += this.vy;
+
+    if (this.isFloor()) {
+      this.vy = 0;
+      this.g = 0;
+      console.log("Tocado");
+    }
+
+    if(this.ay === 0) {
+      this.img.frameIndex = 0;
+    } else {
+      this.tick ++;
+      if(this.tick > 10) {
+        this.tick = 0;
+        this.img.frameIndex++
+        if (this.img.frameIndex >= this.img.frames) { 
+          this.img.frameIndex = 0;
+      }
+    }
+
+    }
   }
 
-  onKeyEvent(event) {
+  onKeyDownEvent(event) {
     // TODO
+    switch (event) {
+      case UP:
+        this.ay = -0.1;
+        break;
+      case RIGHT:
+        this.ax = 0.05;
+        break;
+      case LEFT:
+        this.ax = -0.05;
+        break;
+    }
+  }
+
+  onKeyUpEvent(event) {
+    switch (event) {
+      case UP:
+        this.ay = 0;
+        break;
+    }
   }
 }
